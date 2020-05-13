@@ -12,7 +12,7 @@ import java.io.ObjectOutputStream;
 public class GroupDAO implements DAO<Group> {
 
   @Override
-  public Group create(Group object) {
+  public void create(Group object) {
     try (ObjectOutputStream outputStream = new ObjectOutputStream(
         new BufferedOutputStream(
             new FileOutputStream("group")))) {
@@ -20,7 +20,6 @@ public class GroupDAO implements DAO<Group> {
     } catch (IOException exception) {
       exception.printStackTrace();
     }
-    return object;
   }
 
   @Override
@@ -39,7 +38,9 @@ public class GroupDAO implements DAO<Group> {
   public void delete(String path) {
     try {
       File file = new File(path);
-      file.delete();
+      if(!file.delete()){
+        throw new Exception("File deletion error");
+      }
     } catch (Exception exception) {
       exception.printStackTrace();
     }

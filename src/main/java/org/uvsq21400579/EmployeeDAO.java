@@ -12,14 +12,13 @@ import java.io.ObjectOutputStream;
 public class EmployeeDAO implements DAO<Employee> {
 
   @Override
-  public Employee create(Employee object) {
+  public void create(Employee object) {
     try (ObjectOutputStream outputStream = new ObjectOutputStream(new BufferedOutputStream(
         new FileOutputStream("employee")))) {
       outputStream.writeObject(object);
     } catch (IOException exception) {
       exception.printStackTrace();
     }
-    return object;
   }
 
   @Override
@@ -38,7 +37,9 @@ public class EmployeeDAO implements DAO<Employee> {
   public void delete(String path) {
     try {
       File file = new File(path);
-      file.delete();
+      if(!file.delete()){
+        throw new Exception("File deletion error");
+      }
     } catch (Exception exception) {
       exception.printStackTrace();
     }

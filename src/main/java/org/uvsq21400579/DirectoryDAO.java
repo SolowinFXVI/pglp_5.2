@@ -12,7 +12,7 @@ import java.io.ObjectOutputStream;
 public class DirectoryDAO implements DAO<Directory> {
 
   @Override
-  public Directory create(Directory directory) {
+  public void create(Directory directory) {
     try (ObjectOutputStream outputStream = new ObjectOutputStream(
         new BufferedOutputStream(
             new FileOutputStream("directory")))) {
@@ -20,7 +20,6 @@ public class DirectoryDAO implements DAO<Directory> {
     } catch (IOException exception) {
       exception.printStackTrace();
     }
-    return directory;
   }
 
   @Override
@@ -39,7 +38,9 @@ public class DirectoryDAO implements DAO<Directory> {
   public void delete(String path) {
     try {
       File file = new File(path);
-      file.delete();
+      if(!file.delete()){
+        throw new Exception("File deletion error");
+      }
     } catch (Exception exception) {
       exception.printStackTrace();
     }
