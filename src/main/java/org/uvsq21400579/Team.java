@@ -6,4 +6,6 @@ public abstract class Team implements Serializable {
 
   public abstract void printName();
 
+  public abstract String getName();
+
 }

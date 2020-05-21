@@ -1,15 +1,18 @@
 package org.uvsq21400579;
 
-public class DAOFactory {
-  public static DAO<Directory> getDirectoryDAO() {
-    return new DirectoryDAO();
+public class DAOFactory implements DAOFactoryAbstract{
+  @Override
+  public DAO<Employee> createEmployeeDAO() {
+    return new EmployeeDAO();
   }
 
-  public static DAO<Group> getGroupDAO() {
+  @Override
+  public DAO<Group> createGroupDAO() {
     return new GroupDAO();
   }
 
-  public static DAO<Employee> getEmployeeDAO() {
-    return new EmployeeDAO();
+  @Override
+  public DAO<Directory> createDirectoryDAO() {
+    return new DirectoryDAO();
   }
 }

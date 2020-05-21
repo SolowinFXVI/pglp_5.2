@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 public class Group extends Team implements Iterable<Team>, Serializable {
 
-  private final String nom;
+  private final String name;
   private final TeamIterator<Team> head;
 
   /**
@@ -13,7 +13,7 @@ public class Group extends Team implements Iterable<Team>, Serializable {
    * @param name Name of Group.
    */
   public Group(String name) {
-    this.nom = name;
+    this.name = name;
     this.head = new TeamIterator<>();
   }
 
@@ -25,10 +25,15 @@ public class Group extends Team implements Iterable<Team>, Serializable {
    * Prints the name of the Group.
    */
   public void printName() {
-    System.out.println(this.nom);
+    System.out.println(this.name);
     for (Team e : this) {
       e.printName();
     }
+  }
+
+  @Override
+  public String getName() {
+    return this.name;
   }
 
   @Override

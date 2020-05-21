@@ -62,7 +62,15 @@ public final class Employee extends Team implements Serializable {
     return Collections.unmodifiableList(this.phone);
   }
 
-  public java.time.LocalDate getLocalDate() {
+  public String getSurname(){
+    return this.surname;
+  }
+
+  public String getFunction() {
+    return function;
+  }
+
+  public java.time.LocalDate getBirthDate() {
     return this.birthDate;
   }
 
