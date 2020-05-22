@@ -1,13 +1,13 @@
 package org.uvsq21400579;
 
-public class DAOFactory implements DAOFactoryAbstract{
+public class DAOFactory implements DAOFactoryAbstract {
   @Override
   public DAO<Employee> createEmployeeDAO() {
     return new EmployeeDAO();
   }
 
   @Override
-  public DAO<Group> createGroupDAO() {
+  public GroupDAO createGroupDAO() {
     return new GroupDAO();
   }
 

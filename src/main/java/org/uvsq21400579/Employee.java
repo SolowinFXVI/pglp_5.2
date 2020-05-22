@@ -62,7 +62,7 @@ public final class Employee extends Team implements Serializable {
     return Collections.unmodifiableList(this.phone);
   }
 
-  public String getSurname(){
+  public String getSurname() {
     return this.surname;
   }
 

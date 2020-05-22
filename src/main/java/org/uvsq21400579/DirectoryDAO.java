@@ -7,30 +7,26 @@ import java.sql.SQLException;
 
 public class DirectoryDAO extends DAO<Directory> {
 
-  private DAO dao;
-
-  DirectoryDAO(){
-
-  }
+  private final DAO employeeDAO = new EmployeeDAO();
+  private final DAO groupDAO = new GroupDAO();
 
   @Override
   public void create(Directory object) {
     String insertFromNameString = "INSERT INTO DIRECTORY(NAME) VALUES(?)";
-    String insertFromGroupString = "INSERT INTO DIRECTORY(GROUPNAME) VALUES(?)";
+    String insertFromGroupString = "INSERT INTO GROUPDIRECTORY(NAME) VALUES(?)";
     this.connect();
 
-    try(
-        PreparedStatement insertFromGroup = connect.prepareStatement(insertFromGroupString);
-        PreparedStatement insertFromName = connect.prepareStatement(insertFromNameString);
-        ){
-      for(Team t : object){
-        if(t instanceof Group){
-          this.dao.create(t);
+    try (
+        PreparedStatement insertFromGroup = connection.prepareStatement(insertFromGroupString);
+        PreparedStatement insertFromName = connection.prepareStatement(insertFromNameString)
+        ) {
+      for (Team t : object) {
+        if (t instanceof Group) {
+          this.groupDAO.create(t);
           insertFromGroup.setString(1,t.getName());
           insertFromGroup.executeUpdate();
-        }
-        else if(t instanceof Employee){
-          this.dao.create(t);
+        } else if (t instanceof Employee) {
+          this.employeeDAO.create(t);
           insertFromName.setString(1,t.getName());
           insertFromName.executeUpdate();
         }
@@ -45,20 +41,24 @@ public class DirectoryDAO extends DAO<Directory> {
   @Override
   public Directory find(String key) {
     Directory directory = null;
-    String selectFromGroupString = "SELECT * FROM GROUPDIRECTORY D";
-    String selectFromNameString = "SELECT * FROM DIRECTORYD";
+    String selectFromGroupString = "SELECT * FROM GROUPDIRECTORY";
+    String selectFromNameString = "SELECT * FROM DIRECTORY";
     this.connect();
-    try(
-        PreparedStatement selectFromGroup = connect.prepareStatement(selectFromGroupString);
-        PreparedStatement selectFromName = connect.prepareStatement(selectFromNameString);
+    try (
+        PreparedStatement selectFromGroup = connection.prepareStatement(selectFromGroupString);
+        PreparedStatement selectFromName = connection.prepareStatement(selectFromNameString)
         ) {
       ResultSet resultSetGroup = selectFromGroup.executeQuery();
-      while(resultSetGroup.next()){
-        directory.addTeam((Group) this.dao.find(resultSetGroup.getString("groupName")));
+      while (resultSetGroup.next()) {
+        if (directory != null) {
+          directory.addTeam((Group) this.groupDAO.find(resultSetGroup.getString("NAME")));
+        }
       }
       ResultSet resultSetName = selectFromName.executeQuery();
-      while (resultSetName.next()){
-        directory.addTeam((Employee) this.dao.find(resultSetName.getString("name")));
+      while (resultSetName.next()) {
+        if (directory != null) {
+          directory.addTeam((Employee) this.employeeDAO.find(resultSetName.getString("NAME")));
+        }
       }
     } catch (SQLException throwables) {
       throwables.printStackTrace();
@@ -70,13 +70,13 @@ public class DirectoryDAO extends DAO<Directory> {
 
   @Override
   public void delete(String key) {
-    String deleteFromGroupString = "SELECT FROM GROUPDIRECTORY D WHERE D.groupname = ?";
-    String deleteFromNameString = "SELECT FROM DIRECTORY D WHERE D.name = ?";
+    String deleteFromGroupString = "SELECT FROM GROUPDIRECTORY D WHERE D.NAME = ?";
+    String deleteFromNameString = "SELECT FROM DIRECTORY D WHERE D.NAME = ?";
     this.connect();
-    try(
-        PreparedStatement deleteFromGroup = connect.prepareStatement(deleteFromGroupString);
-        PreparedStatement deleteFromName = connect.prepareStatement(deleteFromNameString);
-        ){
+    try (
+        PreparedStatement deleteFromGroup = connection.prepareStatement(deleteFromGroupString);
+        PreparedStatement deleteFromName = connection.prepareStatement(deleteFromNameString)
+        ) {
       deleteFromGroup.setString(1,key);
       deleteFromGroup.executeUpdate();
       deleteFromName.setString(1,key);
@@ -89,6 +89,6 @@ public class DirectoryDAO extends DAO<Directory> {
 
   @Override
   public void close() throws Exception {
-    super.connect.close();
+    super.connection.close();
   }
 }
