@@ -4,6 +4,7 @@ package org.uvsq21400579;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 public class DirectoryDAO extends DAO<Directory> {
 
@@ -31,6 +32,8 @@ public class DirectoryDAO extends DAO<Directory> {
           insertFromName.executeUpdate();
         }
       }
+    } catch (SQLIntegrityConstraintViolationException e) {
+      System.out.println("Shape already exists ignoring");
     } catch (SQLException throwables) {
       throwables.printStackTrace();
     }
@@ -70,8 +73,8 @@ public class DirectoryDAO extends DAO<Directory> {
 
   @Override
   public void delete(String key) {
-    String deleteFromGroupString = "SELECT FROM GROUPDIRECTORY D WHERE D.NAME = ?";
-    String deleteFromNameString = "SELECT FROM DIRECTORY D WHERE D.NAME = ?";
+    String deleteFromGroupString = "DELETE FROM GROUPDIRECTORY D WHERE D.NAME = ?";
+    String deleteFromNameString = "DELETE FROM DIRECTORY D WHERE D.NAME = ?";
     this.connect();
     try (
         PreparedStatement deleteFromGroup = connection.prepareStatement(deleteFromGroupString);

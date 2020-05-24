@@ -3,6 +3,7 @@ package org.uvsq21400579;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 public class EmployeeDAO extends DAO<Employee> {
 
@@ -20,6 +21,8 @@ public class EmployeeDAO extends DAO<Employee> {
       insertEmployee.setString(4, object.getPhone().toString());
       insertEmployee.setString(5, object.getBirthDate().toString());
       insertEmployee.executeUpdate();
+    } catch (SQLIntegrityConstraintViolationException e) {
+      System.out.println("Shape already exists ignoring");
     } catch (SQLException throwables) {
       throwables.printStackTrace();
     }

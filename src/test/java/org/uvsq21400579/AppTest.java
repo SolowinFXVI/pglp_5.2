@@ -19,26 +19,24 @@ public class AppTest {
      * Creates the embedded database required by some tests
      */
     @BeforeClass
-    public static void initializeEmbeddedDB(){
+    public static void initializeEmbeddedDB() {
+
         String createEmployeeTableString = "CREATE TABLE \"EMPLOYEE\"(NAME VARCHAR (128) NOT NULL, SURNAME VARCHAR(128) NOT NULL, PRIMARY KEY (NAME) , \"FUNCTION\" VARCHAR(128), PHONE VARCHAR(128), BIRTHDATE VARCHAR(128))";
         String createGroupTableString = "CREATE TABLE \"GROUP\"(NAME VARCHAR (128) PRIMARY KEY NOT NULL)";
         String createGroupDirectoryTableString = "CREATE TABLE GROUPDIRECTORY(NAME VARCHAR(128) PRIMARY KEY, FOREIGN KEY (NAME) REFERENCES \"GROUP\"(NAME))";
         String createDirectoryTableString = "CREATE TABLE DIRECTORY(NAME VARCHAR(128) PRIMARY KEY, FOREIGN KEY (NAME) REFERENCES EMPLOYEE(NAME))";
-        String createIsEmployeeTableString = "CREATE TABLE ISEMPLOYEE(GROUPNAME VARCHAR(128), NAME VARCHAR(128), PRIMARY KEY (GROUPNAME, NAME), FOREIGN KEY (GROUPNAME) REFERENCES \"GROUP\"(NAME),FOREIGN KEY (NAME) REFERENCES EMPLOYEE(NAME))";
-        String createIsGroupTableString = "CREATE TABLE ISGROUP(GROUPNAME VARCHAR(128), NAME VARCHAR(128), PRIMARY KEY (GROUPNAME, NAME), FOREIGN KEY (GROUPNAME) REFERENCES \"GROUP\"(NAME), FOREIGN KEY (NAME) REFERENCES \"GROUP\"(NAME))";
+        String createGroupMembersTableString = "CREATE TABLE GROUPMEMBERS(GROUPNAME VARCHAR(128), FOREIGN KEY (GROUPNAME) REFERENCES \"GROUP\"(NAME), EMPLOYEENAME VARCHAR(128), FOREIGN KEY (EMPLOYEENAME) REFERENCES EMPLOYEE(NAME), PRIMARY KEY (GROUPNAME, EMPLOYEENAME))";
         String driver = "org.apache.derby.jdbc.EmbeddedDriver";
         String protocol = "jdbc:derby:";
         try{
             Class.forName(driver).newInstance();
             Connection connection = DriverManager.getConnection(protocol + "derbyDB;create=true");
             Statement statement = connection.createStatement();
-
             statement.execute(createEmployeeTableString);
             statement.execute(createGroupTableString);
             statement.execute(createGroupDirectoryTableString);
             statement.execute(createDirectoryTableString);
-            statement.execute(createIsEmployeeTableString);
-            statement.execute(createIsGroupTableString);
+            statement.execute(createGroupMembersTableString);
 
             connection.close();
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | SQLException e) {
@@ -56,13 +54,12 @@ public class AppTest {
         String cleanupGroupString = "DROP TABLE \"GROUP\"";
         String cleanupGroupDirectoryString = "DROP TABLE GROUPDIRECTORY";
         String cleanupDirectoryString = "DROP TABLE DIRECTORY";
-        String cleanupIsEmployeeString = "DROP TABLE ISEMPLOYEE";
-        String cleanupIsGroupString = "DROP TABLE ISGROUP";
+        String cleanupGroupMembersString = "DROP TABLE GROUPMEMBERS";
 
         Connection connection = DriverManager.getConnection("jdbc:derby:derbyDB");
         Statement statement = connection.createStatement();
-        statement.execute(cleanupIsGroupString);
-        statement.execute(cleanupIsEmployeeString);
+
+        statement.execute(cleanupGroupMembersString);
         statement.execute(cleanupDirectoryString);
         statement.execute(cleanupGroupDirectoryString);
         statement.execute(cleanupEmployeeString);
